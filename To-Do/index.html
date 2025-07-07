@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskMate – A Simple To-Do & Notes App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1><i class="fas fa-tasks"></i> TaskMate</h1>
+          <p>Organize your life, one task at a time</p>
+          <div class="header-actions">
+            <button
+              id="userProfileBtn"
+              class="user-profile-btn"
+              title="User Profile"
+            >
+              <i class="fas fa-user"></i>
+            </button>
+            <button
+              id="themeToggle"
+              class="theme-toggle"
+              title="Toggle Dark/Light Mode"
+            >
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- User Profile Modal -->
+      <div id="userProfileModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2><i class="fas fa-user-circle"></i> User Profile</h2>
+            <button class="modal-close" id="closeUserModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="profile-section">
+              <h3>Personal Information</h3>
+              <div class="form-group">
+                <label for="userName">Name:</label>
+                <input
+                  type="text"
+                  id="userName"
+                  placeholder="Enter your name"
+                  maxlength="50"
+                />
+              </div>
+              <div class="form-group">
+                <label for="userEmail">Email:</label>
+                <input
+                  type="email"
+                  id="userEmail"
+                  placeholder="Enter your email"
+                  maxlength="100"
+                />
+              </div>
+              <div class="form-group">
+                <label for="userBio">Bio:</label>
+                <textarea
+                  id="userBio"
+                  placeholder="Tell us about yourself..."
+                  maxlength="200"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Preferences</h3>
+              <div class="form-group">
+                <label for="defaultDueDate"
+                  >Default Due Date (days from today):</label
+                >
+                <input
+                  type="number"
+                  id="defaultDueDate"
+                  min="0"
+                  max="365"
+                  value="7"
+                />
+              </div>
+              <div class="form-group">
+                <label for="notificationsEnabled">
+                  <input type="checkbox" id="notificationsEnabled" />
+                  Enable Notifications
+                </label>
+              </div>
+              <div class="form-group">
+                <label for="autoSave">Auto-save interval (seconds):</label>
+                <input
+                  type="number"
+                  id="autoSave"
+                  min="5"
+                  max="300"
+                  value="30"
+                />
+              </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Data Management</h3>
+              <div class="data-actions">
+                <button id="exportData" class="action-btn export-btn">
+                  <i class="fas fa-download"></i> Export Data
+                </button>
+                <button id="importData" class="action-btn import-btn">
+                  <i class="fas fa-upload"></i> Import Data
+                </button>
+                <button id="clearAllData" class="action-btn clear-btn">
+                  <i class="fas fa-trash"></i> Clear All Data
+                </button>
+              </div>
+              <input
+                type="file"
+                id="importFile"
+                accept=".json"
+                style="display: none;"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="saveProfile" class="save-btn">
+              <i class="fas fa-save"></i> Save Profile
+            </button>
+            <button id="cancelProfile" class="cancel-btn">Cancel</button>
+            <button id="logoutBtn" class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quote of the Day -->
+      <div class="quote-section">
+        <div class="quote-card">
+          <i class="fas fa-quote-left quote-icon"></i>
+          <p id="quoteText" class="quote-text">
+            Loading inspirational quote...
+          </p>
+          <p id="quoteAuthor" class="quote-author">- Author</p>
+          <button id="refreshQuote" class="refresh-quote" title="Get new quote">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Login/Signup Modal -->
+      <div id="authModal" class="modal" style="display:none;">
+        <div class="modal-content auth-modal-content">
+          <div class="modal-header">
+            <h2 id="authTitle"><i class="fas fa-user-lock"></i> Login</h2>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm" autocomplete="off">
+              <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input
+                  type="email"
+                  id="loginEmail"
+                  required
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  required
+                  placeholder="Enter your password"
+                  minlength="6"
+                />
+              </div>
+              <button type="submit" class="auth-btn">Login</button>
+              <p class="auth-switch">
+                Don't have an account? <a href="#" id="showSignup">Sign up</a>
+              </p>
+              <p class="auth-error" id="loginError"></p>
+            </form>
+            <form id="signupForm" style="display:none;" autocomplete="off">
+              <div class="form-group">
+                <label for="signupName">Name</label>
+                <input
+                  type="text"
+                  id="signupName"
+                  required
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="signupEmail">Email</label>
+                <input
+                  type="email"
+                  id="signupEmail"
+                  required
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="signupPassword">Password</label>
+                <input
+                  type="password"
+                  id="signupPassword"
+                  required
+                  placeholder="Create a password"
+                  minlength="6"
+                />
+              </div>
+              <button type="submit" class="auth-btn">Sign Up</button>
+              <p class="auth-switch">
+                Already have an account? <a href="#" id="showLogin">Login</a>
+              </p>
+              <p class="auth-error" id="signupError"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- End Login/Signup Modal -->
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Task Section -->
+        <section class="task-section">
+          <h2><i class="fas fa-list-check"></i> Tasks</h2>
+
+          <!-- Add Task Form -->
+          <div class="add-task-form">
+            <div class="form-row">
+              <input
+                type="text"
+                id="taskTitle"
+                placeholder="Enter task title..."
+                maxlength="100"
+                required
+              />
+              <input type="date" id="taskDueDate" required />
+            </div>
+            <div class="form-row">
+              <textarea
+                id="taskDescription"
+                placeholder="Add description (optional)"
+                maxlength="200"
+              ></textarea>
+            </div>
+            <button id="addTaskBtn" class="add-btn">
+              <i class="fas fa-plus"></i> Add Task
+            </button>
+          </div>
+
+          <!-- Task Filters -->
+          <div class="task-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">
+              Completed
+            </button>
+          </div>
+
+          <!-- Task Stats -->
+          <div class="task-stats">
+            <span id="taskCount">0 tasks remaining</span>
+            <button id="clearCompleted" class="clear-btn">
+              Clear Completed
+            </button>
+          </div>
+
+          <!-- Task List -->
+          <ul id="taskList" class="task-list">
+            <!-- Tasks will be added here dynamically -->
+          </ul>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="taskEmptyState">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>No tasks yet</h3>
+            <p>Add your first task to get started!</p>
+          </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="notes-section">
+          <h2><i class="fas fa-sticky-note"></i> Notes</h2>
+
+          <!-- Add Note Form -->
+          <div class="add-note-form">
+            <input
+              type="text"
+              id="noteTitle"
+              placeholder="Note title..."
+              maxlength="50"
+              required
+            />
+            <textarea
+              id="noteContent"
+              placeholder="Write your note here..."
+              maxlength="500"
+              required
+            ></textarea>
+            <button id="addNoteBtn" class="add-btn">
+              <i class="fas fa-plus"></i> Add Note
+            </button>
+          </div>
+
+          <!-- Notes List -->
+          <div id="notesList" class="notes-list">
+            <!-- Notes will be added here dynamically -->
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="notesEmptyState">
+            <i class="fas fa-sticky-note"></i>
+            <h3>No notes yet</h3>
+            <p>Add your first note to get started!</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
